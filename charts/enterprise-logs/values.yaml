@@ -38,7 +38,7 @@ serviceAccount:
 # A GEL configuration file may be provided as Kubernetes Secret outside of this Helm chart.
 useExternalConfig: false
 externalConfigName: enterprise-logs-config
-externalConfigVersion: "0"
+externalConfigVersion: &externalConfigVersion "0"
 
 # -- External license.jwt
 # A GEL license file may be provided as Kubernetes Secret outside of this Helm chart.
@@ -534,6 +534,7 @@ loki-distributed:
       - name: license
         mountPath: /etc/enterprise-logs/license
     replicas: 3
+    maxUnavailable: 1
 
   # -- Configuration for the `distributor` target
   distributor:
@@ -594,6 +595,8 @@ loki-distributed:
   loki:
     config: null
     existingSecretForConfig: enterprise-logs-config
+    externalConfigVersion: *externalConfigVersion
+    configAsSecret: true
     image: *image
 
 

@@ -51,11 +51,7 @@ spec:
         {{- end }}
         app.kubernetes.io/part-of: memberlist
       annotations:
-        {{- if .Values.useExternalConfig }}
-        checksum/config: {{ .Values.externalConfigVersion }}
-        {{- else }}
-        checksum/config: {{ include (print $.Template.BasePath "/secret-config.yaml") . | sha256sum }}
-        {{- end }}
+        {{- include "loki.config.checksum" (index .Subcharts "loki-distributed") | nindent 8 }}
         {{- with .Values.compactor.annotations }}
         {{- toYaml . | nindent 8 }}
         {{- end }}

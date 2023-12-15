@@ -8,6 +8,7 @@ description: "Grafana Enterprise Logs"
 home: "https://grafana.com/products/enterprise/logs/"
 dependencies:
 - name: "loki-distributed"
+  # TODO(dtrejo): Update this to latest loki-distributed after 1st PR merges.
   version: "0.55.0"
   repository: "https://grafana.github.io/helm-charts"
 - name: minio
