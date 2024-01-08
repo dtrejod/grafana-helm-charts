@@ -86,7 +86,7 @@ Create the service endpoint including port for MinIO.
 {{- end -}}
 
 {{- define "enterprise-logs.config.checksum" -}}
-{{- if .Values.configAsSecret }}
+{{- if .Values.useExternalConfig }}
 checksum/config: {{ .Values.externalConfigVersion }}
 {{- else }}
 checksum/config: {{ tpl (mergeOverwrite (tpl .Values.config . | fromYaml) .Values.structuredConfig | toYaml) . | sha256sum }}
