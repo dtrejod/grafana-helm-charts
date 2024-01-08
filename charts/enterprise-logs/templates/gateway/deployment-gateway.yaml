@@ -26,7 +26,7 @@ spec:
         {{- toYaml . | nindent 8 }}
         {{- end }}
       annotations:
-        {{- include "loki.config.checksum" (index .Subcharts "loki-distributed") | nindent 8 }}
+        {{- include "enterprise-logs.config.checksum" . | nindent 8 }}
         {{- with .Values.gateway.annotations }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
@@ -114,7 +114,7 @@ spec:
       terminationGracePeriodSeconds: {{ .Values.gateway.terminationGracePeriodSeconds }}
       volumes:
         - name: config
-          {{- include "loki.configVolume" (index .Subcharts "loki-distributed") | nindent 10 }}
+          {{- include "enterprise-logs.configVolume" . | nindent 10 }}
         - name: license
           secret:
           {{- if .Values.useExternalLicense }}
