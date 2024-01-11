@@ -84,3 +84,32 @@ Create the service endpoint including port for MinIO.
 {{- printf "%s-%s.%s.svc:%s" .Release.Name "minio" .Release.Namespace (.Values.minio.service.port | toString) -}}
 {{- end -}}
 {{- end -}}
+
+{{- define "enterprise-logs.config.checksum" -}}
+{{- if .Values.useExternalConfig }}
+checksum/config: {{ .Values.externalConfigVersion }}
+{{- else }}
+checksum/config: {{ tpl (mergeOverwrite (tpl .Values.config . | fromYaml) .Values.structuredConfig | toYaml) . | sha256sum }}
+{{- end }}
+{{- end }}
+
+{{/*
+The volume to mount for loki configuration
+*/}}
+{{- define "enterprise-logs.configVolume" -}}
+{{- if .Values.externalConfigName }}
+{{- if .Values.configAsSecret }}
+secret:
+  secretName: {{ .Values.externalConfigName }}
+{{- else }}
+configMap:
+  name: {{ .Values.externalConfigName }}
+{{- end }}
+{{- else if .Values.configAsSecret }}
+secret:
+  secretName: {{ include "enterprise-logs.fullname" . }}-config
+{{- else }}
+configMap:
+  name: {{ include "enterprise-logs.fullname" . }}
+{{- end }}
+{{- end -}}

@@ -37,8 +37,9 @@ serviceAccount:
 # -- External config.yaml
 # A GEL configuration file may be provided as Kubernetes Secret outside of this Helm chart.
 useExternalConfig: false
-externalConfigName: enterprise-logs-config
-externalConfigVersion: "0"
+externalConfigName: &externalConfigName "enterprise-logs-config"
+externalConfigVersion: &externalConfigVersion "0"
+configAsSecret: &configAsSecret false
 
 # -- External license.jwt
 # A GEL license file may be provided as Kubernetes Secret outside of this Helm chart.
@@ -56,7 +57,7 @@ license:
   contents: "NOTAVALIDLICENSE"
 
 # -- Grafana Enterprise Logs configuration file
-config: |
+config: &config |
   auth:
     type: enterprise
   auth_enabled: true
@@ -166,7 +167,7 @@ commonConfig:
       insecure: true
 
 # -- Structured GEL configuration, takes precedence over `loki.config`, `loki.schemaConfig`, `loki.storageConfig`
-structuredConfig: {}
+structuredConfig: &structuredConfig {}
 
 # -- Configuration for `tokengen` target
 tokengen:
@@ -534,6 +535,7 @@ loki-distributed:
       - name: license
         mountPath: /etc/enterprise-logs/license
     replicas: 3
+    maxUnavailable: 1
 
   # -- Configuration for the `distributor` target
   distributor:
@@ -592,8 +594,11 @@ loki-distributed:
       enabled: true
 
   loki:
-    config: null
-    existingSecretForConfig: enterprise-logs-config
+    config: *config
+    structuredConfig: *structuredConfig
+    existingSecretForConfig: *externalConfigName
+    externalConfigVersion: *externalConfigVersion
+    configAsSecret: *configAsSecret
     image: *image
 
 
